@@ -59,7 +59,7 @@ runs:
         then
               TRIGGERJOBJSON=$(curl -I -s -X POST -u "$userName:$password"  -H "$CRUMB"  "$urlOfJenkinsServer"/job/"$jenkinsJobName"/build)
         else
-              TRIGGERJOBJSON=$(curl -I -s -X POST -u "$userName:$password"  -H "$CRUMB" "$urlOfJenkinsServer"/job/"$jenkinsJobName"/buildWithParameters?$parameters')
+              TRIGGERJOBJSON=$(curl -I -s -X POST -u "$userName:$password"  -H "$CRUMB" "$urlOfJenkinsServer"/job/"$jenkinsJobName"/buildWithParameters?"$parameters")
         fi
         
         
