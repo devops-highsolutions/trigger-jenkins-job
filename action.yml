@@ -42,7 +42,7 @@ runs:
         verbose=${{ inputs.verbose }}
         userName=${{ inputs.jenkins-username }}
         password=${{ inputs.jenkins-pat }}
-        parameters=${{ inputs.parameters }}
+        parameters="${{ inputs.parameters }}"
 
         startTime=$(date)
         startTimeSeconds=$(date -d "$startTime" +%s) 
