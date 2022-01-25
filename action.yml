@@ -25,6 +25,9 @@ inputs:
     description: 'true/false - turns on verbose logging'
     required: false
     default: false
+  parameters: # pass parameters to jenkins
+    description: 'pass json with parameters to jenkins - example: {“parameter”:[{“name”:”message1″,”value”:”hai”},{“name”:”message2″,”value”:”hello”}]}'
+    required: false
   
 runs:
   using: "composite"
@@ -39,6 +42,7 @@ runs:
         verbose=${{ inputs.verbose }}
         userName=${{ inputs.jenkins-username }}
         password=${{ inputs.jenkins-pat }}
+        parameters=${{ inputs.parameters }}
 
         startTime=$(date)
         startTimeSeconds=$(date -d "$startTime" +%s) 
@@ -50,7 +54,15 @@ runs:
 
         #Generate Crumb value
         CRUMB=`curl -s -u "$userName:$password" $urlOfJenkinsServer'/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)'`
-        TRIGGERJOBJSON=$(curl -I -s -X POST -u "$userName:$password"  -H "$CRUMB" "$urlOfJenkinsServer"/job/"$jenkinsJobName"/build)
+        
+        if [ -z "$parameters" ]
+        then
+              TRIGGERJOBJSON=$(curl -I -s -X POST -u "$userName:$password"  -H "$CRUMB"  "$urlOfJenkinsServer"/job/"$jenkinsJobName"/build)
+        else
+              TRIGGERJOBJSON=$(curl -I -s -X POST -u "$userName:$password"  -H "$CRUMB" –data-urlencode json="$parameters" "$urlOfJenkinsServer"/job/"$jenkinsJobName"/build)
+        fi
+        
+        
         
         if [[ $verbose == true ]]; then
           echo "Results of Triggering The Job:"
